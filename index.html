@@ -3,190 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Calendario Académico</title>
+    <title>Calendario Académico - Giorgio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/lucide-react"></script>
 </head>
-<body>
+<body class="bg-gray-100">
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useMemo, useEffect } = React;
-        // Extraemos los iconos necesarios de Lucide
-        const { 
-            Calendar, CheckCircle, Clock, AlertCircle, 
-            ChevronRight, BookOpen, Code, PieChart, 
-            Filter, ListFilter 
-        } = lucide;
+        const { useState, useMemo } = React;
 
         const App = () => {
-            // Fecha de simulación basada en el contexto del usuario (Abril 2026)
             const TODAY = new Date('2026-04-24T08:00:00');
+            const [filterSubject, setFilterSubject] = useState('all');
 
             const subjects = [
-                {
-                    id: 'calculo',
-                    name: 'Cálculo Integral',
-                    icon: <BookOpen className="w-5 h-5" />,
-                    color: 'blue',
-                    evaluations: [
-                        { name: 'Control 1', type: 'Control', dateStart: '2026-03-31', dateEnd: '2026-04-02', weight: '20% (Total Controles)' },
-                        { name: 'Calificación Parcial 1', type: 'Cuestionario', dateStart: '2026-04-10', dateEnd: '2026-04-12', weight: '15%' },
-                        { name: 'Control 2', type: 'Control', dateStart: '2026-04-24', dateEnd: '2026-04-26', weight: '20% (Total Controles)' },
-                        { name: 'Calificación Parcial 3', type: 'Taller', dateStart: '2026-04-24', dateEnd: '2026-04-30', weight: '20%' },
-                        { name: 'Calificación Parcial 2', type: 'Cuestionario', dateStart: '2026-05-02', dateEnd: '2026-05-04', weight: '15%' },
-                        { name: 'Taller Recuperativo', type: 'Recuperativo', dateStart: '2026-05-12', dateEnd: '2026-05-12', weight: '-' },
-                        { name: 'Control 3', type: 'Control', dateStart: '2026-05-15', dateEnd: '2026-05-17', weight: '20% (Total Controles)' },
-                        { name: 'Control Recuperativo', type: 'Recuperativo', dateStart: '2026-05-19', dateEnd: '2026-05-19', weight: '-' },
-                        { name: 'Calificación Parcial 5', type: 'Cuestionario', dateStart: '2026-05-22', dateEnd: '2026-05-24', weight: '30%' },
-                        { name: 'Evaluación Recuperativa', type: 'Recuperativo', dateStart: '2026-05-26', dateEnd: '2026-05-26', weight: '-' },
-                        { name: 'Examen Final', type: 'Examen', dateStart: '2026-05-30', dateEnd: '2026-05-31', weight: '30% Nota Final' },
-                    ]
-                },
-                {
-                    id: 'programacion',
-                    name: 'Programación Aplicada',
-                    icon: <Code className="w-5 h-5" />,
-                    color: 'purple',
-                    evaluations: [
-                        { name: 'EV 1 Sumativa', type: 'Trabajo Individual', dateStart: '2026-10-14', dateEnd: '2026-10-27', weight: '30%' },
-                        { name: 'EV 2 Sumativa', type: 'Trabajo Individual', dateStart: '2026-11-11', dateEnd: '2026-11-24', weight: '35%' },
-                        { name: 'EV 3 Sumativa', type: 'Trabajo Grupal', dateStart: '2026-12-02', dateEnd: '2026-12-12', weight: '35%' },
-                        { name: 'Examen Obligatorio', type: 'Examen', dateStart: '2026-12-16', dateEnd: '2026-12-20', weight: '30% Nota Final' },
-                    ]
-                },
-                {
-                    id: 'negocios',
-                    name: 'Modelos de Negocios',
-                    icon: <PieChart className="w-5 h-5" />,
-                    color: 'emerald',
-                    evaluations: [
-                        { name: 'EV Sumativa 1', type: 'Cuestionario', dateStart: '2026-03-24', dateEnd: '2026-04-06', weight: '30%' },
-                        { name: 'EV Sumativa 2', type: 'Trabajo Grupal', dateStart: '2026-04-14', dateEnd: '2026-04-27', weight: '30%' },
-                        { name: 'EV Sumativa 3', type: 'Trabajo Grupal', dateStart: '2026-05-12', dateEnd: '2026-05-23', weight: '40%' },
-                        { name: 'Examen Obligatorio', type: 'Examen', dateStart: '2026-05-24', dateEnd: '2026-06-02', weight: '30% Nota Final' },
-                    ]
-                }
+                { id: 'calculo', name: 'Cálculo Integral', color: 'blue', evaluations: [
+                    { name: 'Control 2', start: '2026-04-24', weight: '20%' },
+                    { name: 'Parcial 3 (Taller)', start: '2026-04-24', weight: '20%' },
+                    { name: 'Parcial 2 (Cuest.)', start: '2026-05-02', weight: '15%' },
+                    { name: 'Examen Final', start: '2026-05-30', weight: '30%' }
+                ]},
+                { id: 'programacion', name: 'Programación', color: 'purple', evaluations: [
+                    { name: 'EV 1 Sumativa', start: '2026-10-14', weight: '30%' },
+                    { name: 'Examen Obligatorio', start: '2026-12-16', weight: '30%' }
+                ]},
+                { id: 'negocios', name: 'Modelos Negocio', color: 'green', evaluations: [
+                    { name: 'EV Sumativa 2', start: '2026-04-14', weight: '30%' },
+                    { name: 'Examen Obligatorio', start: '2026-05-24', weight: '30%' }
+                ]}
             ];
 
-            const [filterSubject, setFilterSubject] = useState('all');
-            const [filterStatus, setFilterStatus] = useState('all');
-
-            const getStatus = (start, end) => {
-                const startDate = new Date(start);
-                const endDate = new Date(end);
-                if (endDate < TODAY) return 'passed';
-                const diffTime = startDate - TODAY;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if ((TODAY >= startDate && TODAY <= endDate) || (diffDays >= 0 && diffDays <= 7)) return 'soon';
-                return 'future';
-            };
-
-            const getStatusConfig = (status) => {
-                switch (status) {
-                    case 'passed': return { color: 'bg-green-100 text-green-700 border-green-200', dot: 'bg-green-500', icon: <CheckCircle className="w-4 h-4" />, label: 'Realizada' };
-                    case 'soon': return { color: 'bg-red-100 text-red-700 border-red-200', dot: 'bg-red-500', icon: <AlertCircle className="w-4 h-4" />, label: 'Próxima / Activa' };
-                    default: return { color: 'bg-orange-100 text-orange-700 border-orange-200', dot: 'bg-orange-500', icon: <Clock className="w-4 h-4" />, label: 'Faltante' };
-                }
-            };
-
-            const allEvaluations = useMemo(() => {
+            const allEv = useMemo(() => {
                 let list = [];
-                subjects.forEach(sub => {
-                    sub.evaluations.forEach(ev => {
-                        list.push({ ...ev, subjectName: sub.name, subjectId: sub.id, status: getStatus(ev.dateStart, ev.dateEnd) });
-                    });
-                });
-                return list.sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart));
+                subjects.forEach(s => s.evaluations.forEach(e => list.push({...e, subName: s.name, subId: s.id})));
+                return list.sort((a,b) => new Date(a.start) - new Date(b.start));
             }, []);
 
-            const filteredList = useMemo(() => {
-                return allEvaluations.filter(ev => {
-                    const matchSubject = filterSubject === 'all' || ev.subjectId === filterSubject;
-                    const matchStatus = filterStatus === 'all' || ev.status === filterStatus;
-                    return matchSubject && matchStatus;
-                });
-            }, [allEvaluations, filterSubject, filterStatus]);
+            const filtered = allEv.filter(e => filterSubject === 'all' || e.subId === filterSubject);
 
             return (
-                <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans">
-                    <div className="max-w-4xl mx-auto">
-                        <header className="mb-8">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                                <div>
-                                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Mi Calendario Académico</h1>
-                                    <p className="text-gray-500 flex items-center gap-2 mt-1">
-                                        <Calendar className="w-4 h-4" /> 
-                                        Fecha Actual: 24 de Abril, 2026
-                                    </p>
+                <div className="p-4 max-w-lg mx-auto font-sans">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">📅 Mi Calendario</h1>
+                    <p className="text-sm text-center text-gray-500 mb-6">Ingeniería Industrial - Abril 2026</p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-6 justify-center">
+                        <button onClick={() => setFilterSubject('all')} className={`px-3 py-1 rounded-full text-xs font-bold ${filterSubject==='all'?'bg-black text-white':'bg-white border'}`}>Todas</button>
+                        {subjects.map(s => (
+                            <button key={s.id} onClick={() => setFilterSubject(s.id)} className={`px-3 py-1 rounded-full text-xs font-bold ${filterSubject===s.id?'bg-blue-600 text-white':'bg-white border'}`}>{s.name}</button>
+                        ))}
+                    </div>
+
+                    <div className="space-y-3">
+                        {filtered.map((ev, i) => (
+                            <div key={i} className="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
+                                <div className="text-[10px] font-bold text-blue-500 uppercase">{ev.subName}</div>
+                                <div className="font-bold text-gray-800">{ev.name}</div>
+                                <div className="flex justify-between items-center mt-2">
+                                    <span className="text-xs text-gray-500">📅 {ev.start}</span>
+                                    <span className="bg-gray-100 text-[10px] px-2 py-1 rounded font-bold">{ev.weight}</span>
                                 </div>
                             </div>
-                            
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-200 space-y-4">
-                                <div className="flex flex-wrap items-center gap-3">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2 mr-2">
-                                        <BookOpen className="w-3 h-3" /> Asignatura
-                                    </span>
-                                    <button onClick={() => setFilterSubject('all')} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${filterSubject === 'all' ? 'bg-gray-900 text-white shadow-lg' : 'bg-gray-50 text-gray-600'}`}>Todas</button>
-                                    {subjects.map(sub => (
-                                        <button key={sub.id} onClick={() => setFilterSubject(sub.id)} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-2 ${filterSubject === sub.id ? 'bg-gray-900 text-white shadow-lg' : 'bg-gray-50 text-gray-600'}`}>
-                                            {sub.name}
-                                        </button>
-                                    ))}
-                                </div>
-                                <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-gray-100">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2 mr-2">
-                                        <ListFilter className="w-3 h-3" /> Estado
-                                    </span>
-                                    <button onClick={() => setFilterStatus('all')} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${filterStatus === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-50 text-gray-600'}`}>Todos</button>
-                                    <button onClick={() => setFilterStatus('soon')} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${filterStatus === 'soon' ? 'bg-red-600 text-white' : 'bg-red-50 text-red-600'}`}>Próximas</button>
-                                    <button onClick={() => setFilterStatus('passed')} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition ${filterStatus === 'passed' ? 'bg-green-600 text-white' : 'bg-green-50 text-green-600'}`}>Realizadas</button>
-                                </div>
-                            </div>
-                        </header>
+                        ))}
+                    </div>
 
-                        <div className="space-y-4">
-                            {filteredList.map((ev, index) => {
-                                const config = getStatusConfig(ev.status);
-                                return (
-                                    <div key={index} className={`bg-white border rounded-2xl p-5 hover:shadow-md transition-all ${ev.status === 'soon' ? 'ring-2 ring-red-100 border-red-200' : 'border-gray-200'}`}>
-                                        <div className="flex flex-col sm:flex-row justify-between gap-4">
-                                            <div className="flex gap-4">
-                                                <div className={`p-3 rounded-xl h-fit ${config.color.split(' ')[0]}`}>
-                                                    {subjects.find(s => s.id === ev.subjectId)?.icon}
-                                                </div>
-                                                <div>
-                                                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                                                        <span className="text-xs font-bold text-gray-400 uppercase">{ev.subjectName}</span>
-                                                        <div className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-bold uppercase ${config.color}`}>
-                                                            <div className={`w-1.5 h-1.5 rounded-full ${config.dot}`}></div>
-                                                            {config.label}
-                                                        </div>
-                                                    </div>
-                                                    <h3 className="text-lg font-extrabold text-gray-800">{ev.name}</h3>
-                                                    <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-                                                        <Calendar className="w-4 h-4 opacity-70" />
-                                                        {new Date(ev.dateStart).toLocaleDateString('es-CL', { day: 'numeric', month: 'long' })}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="bg-gray-100 px-3 py-1 rounded-lg text-[11px] font-bold text-gray-600 inline-block">{ev.weight}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        <div className="mt-12 p-6 bg-gray-900 rounded-3xl text-white">
-                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-indigo-300">Notas del Semestre</h2>
-                            <p className="text-xs text-gray-400">Cálculo: Examen reprobatorio ≥ 4.0. Programación: No usar IA.</p>
-                        </div>
+                    <div className="mt-10 p-4 bg-gray-800 rounded-xl text-white text-[11px]">
+                        <p className="font-bold text-yellow-400 mb-1">⚠️ Recordatorio:</p>
+                        <p>Cálculo: Examen ≥ 4.0 para aprobar.</p>
+                        <p>Programación: Control estricto de IA.</p>
                     </div>
                 </div>
             );
